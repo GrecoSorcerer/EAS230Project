@@ -1,85 +1,164 @@
 % DECLARATIONS_____________________________________________________________
 
-cross_section = 'none';
-orientation = 'none';
-material = 'none';
-ErrorCounter = 0;
-cs_area = 0.01; % units in m^2
-length = 3; % units in m
-S_f = 4; % unitless
-g = 9.81; % units in m/s^2
-M = 101; % unitless
+MAXTRIES = 3;
+
+cs_area        = 0.01;  % units in m^2
+L              = 3;     % units in m
+safety_factor  = 4;     % unitless
+g              = 9.81;  % units in m/s^2
+M              = 101;   % unitless
+F              = 1;     % Load in N/m, no default given, assuming 1.
 
 % CROSS SECTION INPUT______________________________________________________
-Print_CS_Menu;
 
-while(cross_section < 1 || cross_section > 5)
-Print_CS_Menu;
-ErrorCounter = ErrorCounter + 1;
-if (ErrorCounter == 3)
-    %Call Error Function
-end
-end
+cross_section = Print_CS_Menu(MAXTRIES);
 
-ErrorCounter = 0;
+% error handling
+if (cross_section  == -1)
+    error("Too many invalid entries!")
+end
 
 %ORIENTATION INPUT_________________________________________________________
 
-Print_O_Menu;
+orientation = Print_O_Menu(MAXTRIES);
 
-while(orientation < 1 || orientation > 2)
-Print_O_Menu;
-ErrorCounter = ErrorCounter + 1;
-if (ErrorCounter == 3)
-    %Call Error Function
+% error handling
+if (orientation  == -1)
+    error("Too many invalid entries!")
 end
-end
-
-ErrorCounter = 0;
 
 %MATERIAL INPUT____________________________________________________________
 
-Print_M_Menu;
+material = Print_M_Menu(MAXTRIES);
 
-while(material < 1 || material > 7)
-Print_M_Menu;
-ErrorCounter = ErrorCounter + 1;
-if (ErrorCounter == 3)
-    %Call Error Function
-end
+% error handling
+if (material  == -1)
+    error(-1,"Too many invalid entries!")
 end
 
-ErrorCounter = 0;
 
 
+%COMPUTATIONS______________________________________________________________
 
-function Print_CS_Menu()
-disp('\nChoose a cross-section');
-disp('    1 - Circular');
-disp('    2 - Rectangular');
-disp('    3 - I-Beam');
-disp('    4 - T-Beam');
-disp('    5 - L-Beam\n');
-cross-section = input('Option: ','s');
+[rho, E, sigma] = Material(material);
+
+[a, b, I] = Geometry(cross_section, cs_area, orientation);
+
+% Compute the change in x
+dx  = L / (M -1);
+
+% Initialize point load array
+f_m = zeros([1,M]);
+m = 1:M; % indexing array
+% Compute the point load.
+f_m(m == (M-1)/2) = F/dx;
+f_m = f_m';
+
+sigmaMax = ( max(a,b) .* ( (f_m .* L) ./ (4*I) )) ./ safety_factor;
+
+mu = rho*cs_area;
+
+[z] = Deformation(g,mu,E,I,dx,f_m);
+
+x = ((m-1)./(M-1)).*L;
+
+%plot(x,z)
+
+%HELPER FUNCTIONS__________________________________________________________ 
+
+function [cross_section] = Print_CS_Menu(tries)
+    % Recursive function. Calls itself up to tries times, to get a valid
+    % response.
+    % Returns -1 if exceeds tries
+    % Be sure to catch the -1 as an error
+    
+    % Recursive Exit Condition
+    if (tries == 0)
+        cross_section = -1;
+        return;
+    end
+    
+    disp('Choose a cross-section');
+    disp('    1 - Circular');
+    disp('    2 - Rectangular');
+    disp('    3 - I-Beam');
+    disp('    4 - T-Beam');
+    disp('    5 - L-Beam');
+
+    op = input('Option: ');
+    
+    % Recursive loop condition
+    if isempty(op)
+        op = -1;
+    end
+    if ( isnumeric(op)) && ( (op >0) && (op <=5) ) 
+        cross_section = op;
+    else
+        cross_section = Print_CS_Menu(tries - 1);
+    end
 end
 
-function Print_O_Menu()
-disp('\nChoose an orientation');
-disp('    1 - Vertical');
-disp('    2 - Horizontal');
-orientation = input('Option: ', 's');
+function [orientation] = Print_O_Menu(tries)
+    % Recursive function. Calls itself up to tries times, to get a valid
+    % response.
+    % Returns -1 if exceeds tries
+    % Be sure to catch the -1 as an error
+    
+    % Recursive Exit Condition
+    if (tries == 0)
+        orientation = -1;
+        return;
+    end
+
+    disp('Choose an orientation');
+    disp('    1 - Vertical');
+    disp('    2 - Horizontal');
+
+    op = input('Option: ');
+    if isempty(op)
+        op = -1;
+    end
+    % Recursive loop condition
+    if ( isnumeric(op)) && ( (op >0) && (op <=2) ) 
+        orientation = op;
+    else
+        orientation = Print_O_Menu(tries - 1); 
+    end
+
 end
 
-function Print_M_Menu()
-disp('\nChoose a material');
-disp('    1 - White Oak');
-disp('    2 - Western White Pine');
-disp('    3 - Red Maple');
-disp('    4 - Particle board');
-disp('    5 - Plywood');
-disp('    6 - Aluminum');
-disp('    7 - Steel');
-material = input('Option: ', 's');
+function [material] = Print_M_Menu(tries)
+    % Recursive function. Calls itself up to tries times, to get a valid
+    % response.
+    % Returns -1 if exceeds tries
+    % Be sure to catch the -1 as an error
+    
+    % Recursive Exit Condition
+    if (tries == 0)
+        material = -1;
+        return;
+    end
+
+    disp('Choose a material');
+    disp('    1 - White Oak');
+    disp('    2 - Western White Pine');
+    disp('    3 - Red Maple');
+    disp('    4 - Particle board');
+    disp('    5 - Plywood');
+    disp('    6 - Aluminum');
+    disp('    7 - Steel');
+    
+    op = input('Option: ');
+    if isempty(op)
+        op = -1;
+    end
+    % Recursive loop condition
+    if ( isnumeric(op) ) && ( (op >0) && (op <=7) ) 
+        material = op;
+    else
+        material = Print_M_Menu(tries - 1);
+    end
+
 end
 
 % Salvatore L Greco <slgreco@buffalo.edu>
