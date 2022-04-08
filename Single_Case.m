@@ -7,7 +7,7 @@ L              = 3;     % units in m
 safety_factor  = 4;     % unitless
 g              = 9.81;  % units in m/s^2
 M              = 101;   % unitless
-F              = 1;     % Load in N/m, no default given, assuming 1.
+F              = 0;     % Load in N/m, no default given, assuming 1.
 
 % CROSS SECTION INPUT______________________________________________________
 
@@ -54,6 +54,7 @@ m = 1:M; % indexing array
 f_m(m == (M-1)/2) = F/dx;
 f_m = f_m';
 
+% Compute Theoretical Max force with safety factor
 sigmaMax = ( max(a,b) .* ( (f_m .* L) ./ (4*I) )) ./ safety_factor;
 
 mu = rho*cs_area;
