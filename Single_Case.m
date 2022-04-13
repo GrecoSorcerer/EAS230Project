@@ -56,7 +56,7 @@ end
 [a, b, I] = Geometry(cross_section, cs_area, orientation);
 
 % Compute the change in x
-dx  = L / (M -1);
+dx  = L / (M - 1);
 
 % Calculate max safe stress
 sigmaMax  = sigma/safety_factor;
@@ -72,7 +72,7 @@ m = 1:M; % indexing array
 
 % Compute the point load.
 f_m(m == (M-1)/2) = (F)/dx;
-% Put point load into format the Deformationfunction expects
+% Put point load into format the Deformation function expects
 f_m = f_m';
 
 % Calculate mu

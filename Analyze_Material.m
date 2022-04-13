@@ -55,30 +55,61 @@ end
 % Compute the change in x
 dx  = L / (M -1);
 
+sigmaMax = zeros(1,7);
+F = zeros(1,7);
+
+
+for material = 1:7
+
+% Calculate max safe stress
+sigmaMax(material) = Mats(material,3)/safety_factor;
+
+% Calculate the load
+F(material) = ( sigmaMax(material) * ( 4 * I ) ) ...
+/ ( max(a,b) * (L) );
+
+end
+
 % Initialize point load array
-f_m = zeros([1,M]);
+f_m = zeros([7,M]);
 m = 1:M; % indexing array
 % Compute the point load.
-f_m(m == (M-1)/2) = F/dx;
+
+for material = 1:7
+f_m(m == (M+1)/2,material) = F(material)./dx;
+end
+
 f_m = f_m';
 
-% Compute Theoretical Max force with safety factor
-sigmaMax = ( max(a,b) .* ( (f_m .* L) ./ (4*I) )) ./ safety_factor;
-
 % Compute 7 values for mu
-mu = Mats(:,1).*0.01;
+mu = Mats(:,1).*cs_area;
 
 % Initialize deformation data matrix
+Z_max = zeros(1,7);
+
 Z = zeros(7,M);
-for z = 1:7
+
+for material = 1:7
     % Populate deformation data matrix 
-    Z(z,:) = Deformation(g,mu(z,1),Mats(z,2),I,dx,f_m);
+    Z(material,:) = Deformation(g,mu(material,1),Mats(material,2),I,dx,f_m(material));
+    Z_max(material) = max( abs(Z) );
 end
 %Place Z into output format by transposing it
 Z = Z';
 
 file_name = [CROSS_SECTION(cross_section) '_' ORIENTATION(orientation) '_deformation.mat'];
 save(file_name,"Z","-mat");
+
+%Printing the table________________________________________________________
+
+fprintf('For a %s cross-section in a %s orientation\n', cross_section, orientation);
+disp('          Material   Recommended max load   Failure load   Maximum deformation   Weight');
+disp('                                      [N]            [N]                  [mm]     [kg]');
+
+for material = 1:7
+fprintf('%s %f %f %f %f\n', MATERIAL(material), F(material)./safety_factor, F(material), Z_max(material), mu(materials)*g*L);
+end
+
 %HELPER FUNCTIONS__________________________________________________________
 function [cross_section] = Print_CS_Menu(tries)
     % Recursive function. Calls itself up to tries times, to get a valid
