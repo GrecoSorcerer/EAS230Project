@@ -107,7 +107,7 @@ save(file_name,"Z","-mat");
 
 %Printing the table________________________________________________________
 
-fprintf('For a %s cross-section in a %s orientation\n', cross_section, orientation);
+fprintf('For a %s cross-section in a %s orientation\n', CROSS_SECTION(cross_section), ORIENTATION(orientation));
 disp('          Material   Recommended max load   Failure load   Maximum deformation   Weight');
 disp('                                      [N]            [N]                  [mm]     [kg]');
 
