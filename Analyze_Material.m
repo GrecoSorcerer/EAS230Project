@@ -76,7 +76,7 @@ m = 1:M; % indexing array
 % Compute the point load.
 
 for material = 1:7
-f_m(m == (M+1)/2,material) = F(material)./dx;
+    f_m(material,m == (M+1)/2) = F(material)./dx;
 end
 
 f_m = f_m';
