@@ -5,6 +5,11 @@ ORIENTATION    = containers.Map([1,2],{'vertical','horizontal'});
 CROSS_SECTION  = containers.Map([1,2,3,4,5], ...
                                 {'Circular', 'Rectangular', 'I-Beam',...
                                  'T-Beam',   'L-Beam'});
+MATERIAL       = containers.Map([1,2,3,4,5,6,7], ...
+                                {'White Oak', 'Western White Pine', ...
+                                 'Red Maple', 'Particle board',     ...
+                                 'Plywood', 'Aluminum',             ...
+                                 'Steel'});
 
 cs_area        = 0.01;  % units in m^2
 L              = 3;     % units in m
@@ -91,8 +96,8 @@ Z = zeros(7,M);
 
 for material = 1:7
     % Populate deformation data matrix 
-    Z(material,:) = Deformation(g,mu(material,1),Mats(material,2),I,dx,f_m(material));
-    Z_max(material) = max( abs(Z) );
+    Z(material,:) = Deformation(g,mu(material,1),Mats(material,2),I,dx,f_m(:,material));
+    Z_max(material) = max( abs(Z(material,:)) );
 end
 %Place Z into output format by transposing it
 Z = Z';
