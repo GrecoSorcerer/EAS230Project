@@ -112,7 +112,7 @@ disp('          Material   Recommended max load   Failure load   Maximum deforma
 disp('                                      [N]            [N]                  [mm]     [kg]');
 
 for material = 1:7
-fprintf('%s %f %f %f %f\n', MATERIAL(material), F(material)./safety_factor, F(material), Z_max(material), mu(materials)*g*L);
+fprintf('%s %f %f %f %f\n', MATERIAL(material), F(material)./safety_factor, F(material), Z_max(material), mu(material)*g*L);
 end
 
 %HELPER FUNCTIONS__________________________________________________________
