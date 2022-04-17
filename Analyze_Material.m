@@ -16,7 +16,6 @@ L              = 3;     % units in m
 safety_factor  = 4;     % unitless
 g              = 9.81;  % units in m/s^2
 M              = 101;   % unitless
-F              = 0;     % units in N/Pa
 
 
 % CROSS SECTION INPUT______________________________________________________
@@ -40,15 +39,12 @@ end
 
 
 % CALLING Geometry.m and Material.m________________________________________
+
 [a,         b,       I]           = Geometry(cross_section, cs_area, orientation);
-%{
-[rho_oak,   E_oak,   sigma_oak]   = Material(1);        % White Oak
-[rho_pine,  E_pine,  sigma_pine]  = Material(2);     % Western white pine
-[rho_maple, E_maple, sigma_maple] = Material(3);  % Red maple
-%}
 
 % Initialize Materials data materix
 Mats = zeros(7,3);
+
 for m = 1:7
     % Populate the Material data matrix with all of our material data.
     % It took way too long to remember I could take multiple outputs from a

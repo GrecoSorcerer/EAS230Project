@@ -2,3 +2,4 @@
 **/output.txt
 *.asv
 **/.DS_Store
+**.mat

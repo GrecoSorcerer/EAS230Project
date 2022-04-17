@@ -46,7 +46,7 @@ material = Print_M_Menu(MAXTRIES);
 
 % error handling
 if (material  == -1)
-    error(-1,"Too many invalid entries!")
+    error("Too many invalid entries!")
 end
 
 %THE BODY__________________________________________________________________
