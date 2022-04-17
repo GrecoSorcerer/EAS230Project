@@ -40,7 +40,7 @@ end
 
 % CALLING Geometry.m and Material.m________________________________________
 
-[a,         b,       I]           = Geometry(cross_section, cs_area, orientation);
+[a, b, I] = Geometry(cross_section, cs_area, orientation);
 
 % Initialize Materials data materix
 Mats = zeros(7,3);
@@ -53,10 +53,13 @@ for m = 1:7
 end
 
 %COMPUTATING RECCOMENDED MAX LOAD__________________________________________
+
 % Compute the change in x
 dx  = L / (M -1);
 
+% Init sigma max table
 sigmaMax = zeros(1,7);
+% Init load force table
 F = zeros(1,7);
 
 

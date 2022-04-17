@@ -5,6 +5,7 @@ ORIENTATION    = containers.Map([1,2],{'vertical','horizontal'});
 CROSS_SECTION  = containers.Map([1,2,3,4,5], ...
                                 {'Circular', 'Rectangular', 'I-Beam',...
                                  'T-Beam',   'L-Beam'});
+
 MATERIAL       = containers.Map([1,2,3,4,5,6,7], ...
                                 {'White Oak', 'Western White Pine', ...
                                  'Red Maple', 'Particle board',     ...
@@ -17,24 +18,6 @@ safety_factor  = 4;     % unitless
 g              = 9.81;  % units in m/s^2
 M              = 101;   % unitless
 
-% CROSS SECTION INPUT______________________________________________________
-
-cross_section = Print_CS_Menu(MAXTRIES);
-
-if (cross_section  == -1)
-    error("Too many invalid entries!")
-end
-
-
-% ORIENTATION INPUT________________________________________________________
-
-orientation = Print_O_Menu(MAXTRIES);
-
-if (orientation  == -1)
-    error("Too many invalid entries!")
-end
-
-
 % MATERIAL INPUT___________________________________________________________
 
 material = Print_M_Menu(MAXTRIES);
@@ -46,66 +29,83 @@ end
 
 % CALLING Geometry.m and Material.m________________________________________
 
+% init geometry data table, row 1-5 are vert, 6-10 are horiz
+geometry_data = zeros(10,3); 
+for cross_section = 1:5
 
-% COMPUTING RECCOMENDED LOADs______________________________________________
+    % Grab vertical
+    geometry_data(cross_section,:) = Geometry(cross_section, cs_area, 1);
+    % Grab Horiz
+    geometry_data(cross_section+5,:) = Geometry(cross_section, cs_area, 2);
+end
 
+% grab material data <rho E sigma>
+[rho, E, sigma] = Material(material);
+
+
+% COMPUTING LOAD AND DEFORMATION___________________________________________
+
+% Compute the change in x
+dx  = L / (M - 1);
+
+% Calculate max safe stress
+sigmaMax = sigma/safety_factor;
+
+F_data = zeros(1,10);
+
+f_m = zeros(M,10);
+
+m = 1:M; % indexing array
+
+% Calculate the Rec. Max Force
+for beam = 1:10
+    %Compute the Rec. Max Load with sigmaMax
+    F_data(beam) = ( sigmaMax * ( 4 * geometry_data(beam,3) ) ) ...
+        / ( max(geometry_data(beam,1:2)) * (L) );
+    % Compute the point load
+    f_m(m == (M+1)/2, beam) = F_data(beam)/dx;
+end
+
+% Compute mu 
+mu = rho.*cs_area;
+
+% Init deformations table, col 1-5 are vert, 6-10 are horiz.
+Z = zeros(M,10);
+
+for beam = 1:10
+
+    Z(:,beam) = Deformation(g, mu, E, geometry_data(beam,3),dx,f_m(:,beam));
+end
 
 % Printing the tables______________________________________________________
-
+x = ((m-1)./(M-1)).*L;
 % GENERATE PLOTS___________________________________________________________
+% fig1 figure(1) handle
+fig1 = ...
+figure(1);
+    
+    % draw the plot of deformation
+    subplot(1,2,1);
+    plot(x,Z(:,[1:5]),'g', ...
+        'LineWidth',2)
+    grid on
+
+    subplot(1,2,2);
+    plot(x,Z(:,[6:10]),'g', ...
+        'LineWidth',2)
+    grid on
+
+    title("The deformation for a beam made of " + Beam_Material + " and a" + newline ...
+        + Beam_XSection + " cross-section in a " + Orientation + '.')
+
+    % set the axis so the deformation is less exagerated.
+    axis([ min(x),     max(x),   ...
+           min(Z)*20, max(abs(Z))*7])
+
+    xlabel("Length [m]")
+    ylabel("Deformation [mm]")
+
 % HELPER FUNCTIONS_________________________________________________________
-function [cross_section] = Print_CS_Menu(tries)
-    % Recursive function. Calls itself up to tries times, to get a valid
-    % response.
-    % Returns -1 if exceeds tries
-    % Be sure to catch the -1 as an error
-    
-    if (tries == 0)
-        cross_section = -1;
-        return;
-    end
-    
-    disp('Choose a cross-section');
-    disp('    1 - Circular');
-    disp('    2 - Rectangular');
-    disp('    3 - I-Beam');
-    disp('    4 - T-Beam');
-    disp('    5 - L-Beam');
-
-    op = input('Option: ');
-
-    if ( ~isempty(op) && isnumeric(op) && ( (op >0) && (op <=5) ) )
-        cross_section = op;
-    else
-        cross_section = Print_CS_Menu(tries - 1);
-    end
-end
-
-function [orientation] = Print_O_Menu(tries)
-    % Recursive function. Calls itself up to tries times, to get a valid
-    % response.
-    % Returns -1 if exceeds tries
-    % Be sure to catch the -1 as an error
-        
-    if (tries == 0)
-        orientation = -1;
-        return;
-    end
-
-    disp('Choose an orientation');
-    disp('    1 - Vertical');
-    disp('    2 - Horizontal');
-
-    op = input('Option: ');
-
-    if ( ~isempty(op) && isnumeric(op) && ( (op >0) && (op <=2) ) )
-        orientation = op;
-    else
-        orientation = Print_O_Menu(tries - 1); 
-    end
-
-end
-
 function [material] = Print_M_Menu(tries)
     % Recursive function. Calls itself up to tries times, to get a valid
     % response.
