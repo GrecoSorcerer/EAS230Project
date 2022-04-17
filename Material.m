@@ -37,7 +37,7 @@ function [rho, E, sigma] = Material(mat)
     
     % Select properties for desired material to return
 
-    rho   = data(mat, 1);       % density of the beam
+    rho   = data(mat, 1)*(997); % density of the beam converted from specific denisty
     E     = data(mat, 2)*(1e9); % in Pa (from GPa)
     sigma = data(mat, 3)*(1e6); % in Pa (from MPa)
 
