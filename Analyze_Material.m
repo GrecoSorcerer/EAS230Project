@@ -115,6 +115,26 @@ for material = 1:7
     fprintf('%18s           %12.4f     %10.4f              %8.4f  %7.2f\n', MATERIAL(material), F(material), F(material).*safety_factor, Z_max(material)*1000, mu(material)*g*L);
 end
 
+%Creating z vs. x figures__________________________________________________
+
+for material = 1:7
+plot(z(material),MATERIAL(material),'-k')
+grid on
+title('Figure %i', material);
+ylabel('x (material)');
+xlabel('z (deformations)');
+end
+
+%creating the max load vs. Young's modulus figures_________________________
+
+for material = 1:7
+plot(F(material),Mats(material,2),'-k')
+grid on
+title('Recommended Maximum Load vs. Young''s Modulus for %s', MATERIAL(material));
+xlabel('Recommended Maximum Load');
+ylabel('Young''s modulus');
+end
+
 %HELPER FUNCTIONS__________________________________________________________
 function [cross_section] = Print_CS_Menu(tries)
     % Recursive function. Calls itself up to tries times, to get a valid
