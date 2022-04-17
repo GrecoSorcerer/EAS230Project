@@ -117,6 +117,23 @@ end
 
 %Creating z vs. x figures__________________________________________________
 
+switch material
+    case 1
+        color = 'r';
+    case 2
+        color = 'g';
+    case 3
+        color = 'b';
+    case 4
+        color = 'c';
+    case 5
+        color = 'm';
+    case 6
+        color = 'y';
+    case 7
+        color = 'k';
+end
+
 for material = 1:7
 plot(z(material),MATERIAL(material),'-k')
 grid on
@@ -127,19 +144,17 @@ end
 
 %creating the max load vs. Young's modulus figures_________________________
 
-for material = 1:7
-plot(F(material),Mats(material,2),'-k')
+plot(F(1),Mats(1,2),'r',F(2),Mats(2,2),'g',F(3),Mats(3,2),'b',F(4),Mats(4,2),'c',F(5),Mats(5,2),'m',F(6),Mats(6,2),'y',F(7),Mats(7,2),'k')
 grid on
 title('Recommended Maximum Load vs. Young''s Modulus for %s', MATERIAL(material));
 xlabel('Recommended Maximum Load');
 ylabel('Young''s modulus');
-end
 
 %HELPER FUNCTIONS__________________________________________________________
 function [cross_section] = Print_CS_Menu(tries)
     % Recursive function. Calls itself up to tries times, to get a valid
     % response.
-    % Returns -1 if exceeds tries
+    % Returns -1 if tries exceed maximum allowance
     % Be sure to catch the -1 as an error
     
     if (tries == 0)
