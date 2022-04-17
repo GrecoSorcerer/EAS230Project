@@ -146,9 +146,7 @@ function [cross_section] = Print_CS_Menu(tries)
     op = input('Option: ');
     
     % Recursive loop condition
-    if isempty(op)
-        op = -1;
-    end
+
     if ( ~isempty(op) && isnumeric(op)) && ( (op >0) && (op <=5) ) 
         cross_section = op;
     else
@@ -173,9 +171,7 @@ function [orientation] = Print_O_Menu(tries)
     disp('	2 - Horizontal');
 
     op = input('Option: ');
-    if isempty(op)
-        op = -1;
-    end
+
     % Recursive loop condition
     if ( ~isempty(op) && isnumeric(op)) && ( (op >0) && (op <=2) ) 
         orientation = op;
@@ -207,9 +203,7 @@ function [material] = Print_M_Menu(tries)
     disp('	7 - Steel');
 
     op = input('Option: ');
-    if isempty(op)
-        op = -1;
-    end
+
     % Recursive loop condition
     if ( ~isempty(op) && isnumeric(op) ) && ( (op >0) && (op <=7) ) 
         material = op;
