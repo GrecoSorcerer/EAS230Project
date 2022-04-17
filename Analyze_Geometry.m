@@ -32,11 +32,13 @@ end
 % init geometry data table, row 1-5 are vert, 6-10 are horiz
 geometry_data = zeros(10,3); 
 for cross_section = 1:5
-
+    
+    [a1,b1,I1] = Geometry(cross_section, cs_area, 1);
+    [a2,b2,I2] = Geometry(cross_section, cs_area, 2);
     % Grab vertical
-    geometry_data(cross_section,:) = Geometry(cross_section, cs_area, 1);
+    geometry_data(cross_section,:) = [a1,b1,I1];
     % Grab Horiz
-    geometry_data(cross_section+5,:) = Geometry(cross_section, cs_area, 2);
+    geometry_data(cross_section+5,:) = [a2,b2,I2];
 end
 
 % grab material data <rho E sigma>

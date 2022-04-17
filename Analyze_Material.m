@@ -45,11 +45,9 @@ end
 % Initialize Materials data materix
 Mats = zeros(7,3);
 
-for m = 1:7
-    % Populate the Material data matrix with all of our material data.
-    % It took way too long to remember I could take multiple outputs from a
-    % function and place them as the values in an initialized array.
-    Mats(m,:) = Material(m);
+for material = 1:7
+    [rho, E, sigma] = Material(material);
+    Mats(material,:) = [rho, E, sigma];
 end
 
 %COMPUTATING RECCOMENDED MAX LOAD__________________________________________
@@ -67,7 +65,7 @@ for material = 1:7
 
     % Calculate max safe stress
     sigmaMax(material) = Mats(material,3)/safety_factor;
-    
+
     % Calculate the load
     F(material) = ( sigmaMax(material) * ( 4 * I ) ) ...
     / ( max(a,b) * (L) );
@@ -80,7 +78,7 @@ m = 1:M; % indexing array
 
 % Compute the point load.
 for material = 1:7
-    f_m(material,m == (M+1)/2) = F(material)./dx;
+    f_m(material,m == (M+1)/2) = F(material)/dx;
 end
 
 % flip for what function will expect
@@ -114,7 +112,7 @@ disp('          Material   Recommended max load   Failure load   Maximum deforma
 disp('                                      [N]            [N]                  [mm]     [kg]');
 
 for material = 1:7
-    fprintf('%18s               %8.4f       %8.4f          %8.4f  %8.2f\n', MATERIAL(material), F(material), F(material).*safety_factor, Z_max(material)*1000, mu(material)*g*L);
+    fprintf('%18s           %12.4f     %10.4f              %8.4f  %7.2f\n', MATERIAL(material), F(material), F(material).*safety_factor, Z_max(material)*1000, mu(material)*g*L);
 end
 
 %HELPER FUNCTIONS__________________________________________________________
