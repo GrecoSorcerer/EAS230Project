@@ -71,7 +71,7 @@ f_m = zeros([1,M]);
 m = 1:M; % indexing array
 
 % Compute the point load.
-f_m(m == (M-1)/2) = (F)/dx;
+f_m(m == (M+1)/2) = (F)/dx;
 % Put point load into format the Deformation function expects
 f_m = f_m';
 
@@ -86,7 +86,7 @@ x = ((m-1)./(M-1)).*L;
 
 % This may need to be change the test uses a differnt file name the the
 % design document.
-file_name = "Single_Case.mat";
+file_name = "Single_Beam.mat";
 
 Beam_Material = MATERIAL(material);
 Beam_XSection = CROSS_SECTION(cross_section);
@@ -117,9 +117,9 @@ figure(1);
     ylabel("Deformation [mm]")
 
 fprintf("For a beam made of %s and a %s cross-section in a %s orientation,\n", Beam_Material, Beam_XSection, Orientation);
-fprintf("Recommended max load [N]: %4.3f\n", F/safety_factor);
-fprintf("Failure load [N]: %5.3f\n",F);
-fprintf("Maximum deformation [mm]: %3.4f\n", z_max*1000);
+fprintf("Recommended max load [N]: %4.3f\n", F);
+fprintf("Failure load [N]: %5.3f\n",F*safety_factor);
+fprintf("Maximum deformation [mm]: %2.4f\n", z_max*1000);
 fprintf("Weight [kg]: %2.1f\n",(mu*g*L));
 
 %HELPER FUNCTIONS__________________________________________________________ 
@@ -149,7 +149,7 @@ function [cross_section] = Print_CS_Menu(tries)
     if isempty(op)
         op = -1;
     end
-    if ( isnumeric(op)) && ( (op >0) && (op <=5) ) 
+    if ( ~isempty(op) && isnumeric(op)) && ( (op >0) && (op <=5) ) 
         cross_section = op;
     else
         cross_section = Print_CS_Menu(tries - 1);
@@ -177,7 +177,7 @@ function [orientation] = Print_O_Menu(tries)
         op = -1;
     end
     % Recursive loop condition
-    if ( isnumeric(op)) && ( (op >0) && (op <=2) ) 
+    if ( ~isempty(op) && isnumeric(op)) && ( (op >0) && (op <=2) ) 
         orientation = op;
     else
         orientation = Print_O_Menu(tries - 1); 
@@ -211,7 +211,7 @@ function [material] = Print_M_Menu(tries)
         op = -1;
     end
     % Recursive loop condition
-    if ( isnumeric(op) ) && ( (op >0) && (op <=7) ) 
+    if ( ~isempty(op) && isnumeric(op) ) && ( (op >0) && (op <=7) ) 
         material = op;
     else
         material = Print_M_Menu(tries - 1);
