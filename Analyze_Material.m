@@ -116,23 +116,30 @@ end
 
 %Creating z vs. x figures__________________________________________________
 
-%Figure(2);
-%plot(z(1),MATERIAL(1),'r',z(2),MATERIAL(2),'g',z(3),MATERIAL(3),'b',z(4),MATERIAL(4),'c',z(5),MATERIAL(5),'m',z(6),MATERIAL(6),'y',z(7),MATERIAL(7),'k')
-%grid on
-%title('Plot of Deformations vs. X');
-%ylabel('x (material)');
-%xlabel('z (deformations)');
+x = ((m-1)./(M-1)).*L;
+
+figure(2);
+plot(x,Z)
+grid on
+title('Plot of Deformations vs. X');
+ylabel('z [N]');
+xlabel('x [m]');
+legend('White Oak','Western White Pine','Red Maple',...
+'Particle board','Plywood','Aluminum','Steel');
+axis([ min(x),     max(x),   ...
+              min(min(Z))*2, 0.01])
 
 %creating the max load vs. Young's modulus figures_________________________
 
 YM = Mats(:,2);
 
+figure(3);
 loglog(F,YM,'d','markerfacecolor','r','markersize',10);
 text(F*0.90,YM*0.85,{'White Oak', 'Western White Pine', 'Red Maple', 'Particle board', 'Plywood', 'Aluminum', 'Steel'}, 'FontSize', 8);
 grid on
 title('Recommended Maximum Load vs. Young''s Modulus');
-xlabel('Recommended Maximum Load');
-ylabel('Young''s modulus');
+xlabel('Recommended Maximum Load [N]');
+ylabel('Young''s modulus [N/m^2]');
 axis([0 10^4 0 10^11.5]);
 
 %HELPER FUNCTIONS__________________________________________________________
