@@ -42,11 +42,11 @@ end
 [a, b, I] = Geometry(cross_section, cs_area, orientation);
 
 % Initialize Materials data materix
-Mats = zeros(7,3);
+material_data = zeros(7,3);
 
 for material = 1:7
     [rho, E, sigma] = Material(material);
-    Mats(material,:) = [rho, E, sigma];
+    material_data(material,:) = [rho, E, sigma];
 end
 
 %COMPUTATING RECCOMENDED MAX LOAD__________________________________________
@@ -63,7 +63,7 @@ F = zeros(1,7);
 for material = 1:7
 
     % Calculate max safe stress
-    sigmaMax(material) = Mats(material,3)/safety_factor;
+    sigmaMax(material) = material_data(material,3)/safety_factor;
 
     % Calculate the load
     F(material) = ( sigmaMax(material) * ( 4 * I ) ) ...
@@ -84,7 +84,7 @@ end
 f_m = f_m';
 
 % Compute 7 values for mu
-mu = Mats(:,1).*cs_area;
+mu = material_data(:,1).*cs_area;
 
 % Initialize deformation data matrix
 Z_max = zeros(1,7);
@@ -93,8 +93,8 @@ Z_max = zeros(1,7);
 Z = zeros(7,M);
 
 for material = 1:7
-    % Populate deformation data matrix 
-    Z(material,:) = Deformation(g,mu(material,1),Mats(material,2),I,dx,f_m(:,material));
+    % Populate deformation data matrix
+    Z(material,:) = Deformation(g,mu(material,1),material_data(material,2),I,dx,f_m(:,material));
     Z_max(material) = max( abs(Z(material,:)) );
 end
 
@@ -131,7 +131,7 @@ figure(2);
 
 %creating the max load vs. Young's modulus figures_________________________
 
-YM = Mats(:,2);
+YM = material_data(:,2);
 
 figure(3);
     loglog(F,YM,'d','markerfacecolor','r','markersize',10);
@@ -149,12 +149,12 @@ function [cross_section] = Print_CS_Menu(tries)
     % response.
     % Returns -1 if tries exceed maximum allowance
     % Be sure to catch the -1 as an error
-    
+
     if (tries == 0)
         cross_section = -1;
         return;
     end
-    
+
     disp('Choose a cross-section');
     disp('    1 - Circular');
     disp('    2 - Rectangular');
@@ -176,7 +176,7 @@ function [orientation] = Print_O_Menu(tries)
     % response.
     % Returns -1 if exceeds tries
     % Be sure to catch the -1 as an error
-        
+
     if (tries == 0)
         orientation = -1;
         return;
@@ -191,7 +191,7 @@ function [orientation] = Print_O_Menu(tries)
     if ( ~isempty(op) && isnumeric(op) && ( (op >0) && (op <=2) ) )
         orientation = op;
     else
-        orientation = Print_O_Menu(tries - 1); 
+        orientation = Print_O_Menu(tries - 1);
     end
 
 end
