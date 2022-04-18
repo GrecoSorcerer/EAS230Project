@@ -111,7 +111,7 @@ disp('          Material   Recommended max load   Failure load   Maximum deforma
 disp('                                      [N]            [N]                  [mm]     [kg]');
 
 for material = 1:7
-    fprintf('%18s           %12.4f     %10.4f              %8.4f  %7.2f\n', MATERIAL(material), F(material), F(material).*safety_factor, Z_max(material)*1000, mu(material)*g*L);
+    fprintf('%18s           %12.4f   %12.4f              %8.4f  %7.2f\n', MATERIAL(material), F(material), F(material).*safety_factor, Z_max(material)*1000, mu(material)*g*L);
 end
 
 %Creating z vs. x figures__________________________________________________
@@ -119,28 +119,29 @@ end
 x = ((m-1)./(M-1)).*L;
 
 figure(2);
-plot(x,Z)
-grid on
-title('Plot of Deformations vs. X');
-ylabel('z [N]');
-xlabel('x [m]');
-legend('White Oak','Western White Pine','Red Maple',...
-'Particle board','Plywood','Aluminum','Steel');
-axis([ min(x),     max(x),   ...
-              min(min(Z))*2, 0.01])
+    plot(x,Z,LineWidth=2)
+    grid on
+    title('Plot of Deformations vs. X');
+    ylabel('z [mm]');
+    xlabel('x [m]');
+    legend('White Oak','Western White Pine','Red Maple',...
+    'Particle board','Plywood','Aluminum','Steel');
+    axis([ min(x),        max(x),   ...
+           min(min(Z))*2, abs(min(min(Z)))*4])
 
 %creating the max load vs. Young's modulus figures_________________________
 
 YM = Mats(:,2);
 
 figure(3);
-loglog(F,YM,'d','markerfacecolor','r','markersize',10);
-text(F*0.90,YM*0.85,{'White Oak', 'Western White Pine', 'Red Maple', 'Particle board', 'Plywood', 'Aluminum', 'Steel'}, 'FontSize', 8);
-grid on
-title('Recommended Maximum Load vs. Young''s Modulus');
-xlabel('Recommended Maximum Load [N]');
-ylabel('Young''s modulus [N/m^2]');
-axis([0 10^4 0 10^11.5]);
+    loglog(F,YM,'d','markerfacecolor','r','markersize',10);
+    text(F*1.05,YM*0.95,{'White Oak', 'Western White Pine', 'Red Maple', 'Particle board', 'Plywood', 'Aluminum', 'Steel'}, 'FontSize', 8);
+    grid on
+    title('Recommended Maximum Load vs. Young''s Modulus');
+    xlabel('Recommended Maximum Load [N]');
+    ylabel('Young''s modulus [N/m^2]');
+    axis([0, max(F)*1.125, ...
+          0, max(YM)*1.125]);
 
 %HELPER FUNCTIONS__________________________________________________________
 function [cross_section] = Print_CS_Menu(tries)
