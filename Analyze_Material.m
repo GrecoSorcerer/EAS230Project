@@ -17,7 +17,6 @@ safety_factor  = 4;     % unitless
 g              = 9.81;  % units in m/s^2
 M              = 101;   % unitless
 
-
 % CROSS SECTION INPUT______________________________________________________
 
 cross_section = Print_CS_Menu(MAXTRIES);
@@ -124,20 +123,17 @@ end
 %ylabel('x (material)');
 %xlabel('z (deformations)');
 
-
 %creating the max load vs. Young's modulus figures_________________________
 
-loglog(F(1),Mats(1,2),'d','markerfacecolor','r','markersize',10,...
-F(2),Mats(2,2),'d','markerfacecolor','g','markersize',10,...
-F(3),Mats(3,2),'d','markerfacecolor','b','markersize',10,...
-F(4),Mats(4,2),'d','markerfacecolor','c','markersize',10,...
-F(5),Mats(5,2),'d','markerfacecolor','m','markersize',10,...
-F(6),Mats(6,2),'d','markerfacecolor','y','markersize',10,...
-F(7),Mats(7,2),'d','markerfacecolor','k','markersize',10);
+YM = Mats(:,2);
+
+loglog(F,YM,'d','markerfacecolor','r','markersize',10);
+text(F*0.90,YM*0.85,{'White Oak', 'Western White Pine', 'Red Maple', 'Particle board', 'Plywood', 'Aluminum', 'Steel'}, 'FontSize', 8);
+grid on
 title('Recommended Maximum Load vs. Young''s Modulus');
 xlabel('Recommended Maximum Load');
 ylabel('Young''s modulus');
-legend('White Oak','Western White Pine','Red Maple','Particle Board','Plywood','Aluminum','Steel');
+axis([0 10^4 0 10^11.5]);
 
 %HELPER FUNCTIONS__________________________________________________________
 function [cross_section] = Print_CS_Menu(tries)
