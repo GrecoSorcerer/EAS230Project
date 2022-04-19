@@ -207,6 +207,6 @@ end
 
 % Salvatore L Greco <slgreco@buffalo.edu>
 % Alexander M Gross <amgross@buffalo.edu>
-% Analyze_Material.m
+% Analyze_Geometry.m
 % EAS230
 % Professor Sabato, Professor Ali
