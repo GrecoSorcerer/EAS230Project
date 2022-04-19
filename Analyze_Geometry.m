@@ -26,7 +26,6 @@ if (material  == -1)
     error("Too many invalid entries!")
 end
 
-
 % CALLING Geometry.m and Material.m________________________________________
 
 % init geometry data table, row 1-5 are vert, 6-10 are horiz
@@ -43,9 +42,6 @@ end
 
 % grab material data <rho E sigma>
 [rho, E, sigma] = Material(material);
-
-
-% COMPUTING LOAD AND DEFORMATION___________________________________________
 
 % Compute the change in x
 dx  = L / (M - 1);
@@ -73,39 +69,106 @@ mu = rho.*cs_area;
 
 % Init deformations table, col 1-5 are vert, 6-10 are horiz.
 Z = zeros(M,10);
-
+Z_max = zeros(1,10);
 for beam = 1:10
-
     Z(:,beam) = Deformation(g, mu, E, geometry_data(beam,3),dx,f_m(:,beam));
+    Z_max(beam) = max( abs( Z(:,beam) ) );
 end
 
-% Printing the tables______________________________________________________
-x = ((m-1)./(M-1)).*L;
+%saving deformations matrix__________________________________________________
+
+file_name = [MATERIAL(material) '_deformation.mat'];
+save(file_name,"Z","-mat");
+
+% Printing the table______________________________________________________
+
+fprintf('For a beam made of %s with a weight of %f kg,\n',MATERIAL(material),mu*g*L);
+
+disp('  Vertical Geometry   Recommended Max Load   Failure Load   Maximum Deformation');
+disp('                                       [N]            [N]                  [mm]');
+for cs = 1:5
+    fprintf('%19s %22.3f %14.4f %21.4f\n', CROSS_SECTION(cs),F_data(cs),...
+    F_data(cs).*safety_factor,Z_max(cs)*1000);
+end
+
+fprintf('\n');
+
+disp('Horizontal Geometry   Recommended Max Load   Failure Load   Maximum Deformation');
+disp('                                       [N]            [N]                  [mm]');
+for cs = 1:5
+    fprintf('%19s %22.3f %14.4f %21.4f\n', CROSS_SECTION(cs),F_data(cs+5),...
+    F_data(cs+5).*safety_factor,Z_max(cs+5)*1000);  
+end
+
+fprintf('\n');
+
 % GENERATE PLOTS___________________________________________________________
-% fig1 figure(1) handle
-fig1 = ...
-figure(1);
+
+x = ((m-1)./(M-1)).*L;
+
+fig4 = ...
+figure(4);
     
-    % draw the plot of deformation
+    % draw the plot of deformations________________________________________
     subplot(1,2,1);
-    plot(x,Z(:,[1:5]),'g', ...
-        'LineWidth',2)
+    plot(x,Z(:,1:5), ...
+        'LineWidth',1)
     grid on
+    title("Deformation of Beams Made of " +...
+           MATERIAL(material) + newline + "Oriented " + ORIENTATION(1) + "ly.");
+    xlabel('Length of Beam [m]');
+    ylabel('Deformation [mm]');
+    legend('Circular','Rectangular','I-Beam',...
+    'T-Beam','L-Beam');
+    axis([ min(x),        max(x),   ...
+           min(min(Z))*2, abs(min(min(Z)))*2])
 
     subplot(1,2,2);
-    plot(x,Z(:,[6:10]),'g', ...
-        'LineWidth',2)
+    plot(x,Z(:,6:10), ...
+        'LineWidth',1)
     grid on
+    title("Deformation of Beams Made of " +...
+           MATERIAL(material) + newline + "Oriented " + ORIENTATION(1) + "ly.");
+    xlabel('Length of Beam [m]');
+    ylabel('Deformation [mm]');
+    legend('Circular','Rectangular','I-Beam',...
+    'T-Beam','L-Beam');
+    axis([ min(x),        max(x),   ...
+           min(min(Z))*2, abs(min(min(Z)))*2])
 
-    title("The deformation for a beam made of " + Beam_Material + " and a" + newline ...
-        + Beam_XSection + " cross-section in a " + Orientation + '.')
+fig4.Position = [100 100 1000 500];
 
-    % set the axis so the deformation is less exagerated.
-    axis([ min(x),     max(x),   ...
-           min(Z)*20, max(abs(Z))*7])
+% draw the plot of rec. max load vs. second moment_____________________
+fig5 = ...
+figure(5);
 
-    xlabel("Length [m]")
-    ylabel("Deformation [mm]")
+
+    loglog(F_data',geometry_data(:,3),'d','markerfacecolor','c','markersize',10);
+
+
+
+    text(F_data([2,4,6:1:10])',geometry_data([2,4,6:1:10],3)*0.95, ...
+        { ...
+            'Vertical Rectangular', ...
+            'Vertical T-Beam', 'Horizontal Circular',...
+            'Horizontal Rectangular','Horizontal I-Beam', 'Horizontal T-Beam', ...
+            'Horizontal L-Beam' ...
+        }, 'FontSize', 8);
+    text(F_data([1,3,5])',geometry_data([1,3,5],3)*0.87, ...
+        { ...
+            'Vertical Circular', ...
+            'Vertical I-Beam', ...
+            'Vertical L-Beam'
+        }, 'FontSize', 8);
+
+
+    title('Recommended Maximum Load vs. Second Moment of Area');
+    xlabel('Recommended Maximum Load [N]');
+    ylabel('Second Moment of Area [mm^4]');
+    grid on
+    axis([ min(F_data)*0.65, max(F_data)*1.35, min(min(geometry_data))*0.65, abs( max( geometry_data(:,3) ) )*1.35 ])
+    
+fig5.Position = [1200 100 550 550];
 
 % HELPER FUNCTIONS_________________________________________________________
 function [material] = Print_M_Menu(tries)
@@ -144,6 +207,6 @@ end
 
 % Salvatore L Greco <slgreco@buffalo.edu>
 % Alexander M Gross <amgross@buffalo.edu>
-% Analyze_Material.m
+% Analyze_Geometry.m
 % EAS230
 % Professor Sabato, Professor Ali
