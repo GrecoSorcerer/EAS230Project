@@ -69,10 +69,10 @@ mu = rho.*cs_area;
 
 % Init deformations table, col 1-5 are vert, 6-10 are horiz.
 Z = zeros(M,10);
-
+Z_max = zeros(1,10);
 for beam = 1:10
     Z(:,beam) = Deformation(g, mu, E, geometry_data(beam,3),dx,f_m(:,beam));
-    Z_max(beam) = max( (Z(beam,:)) );
+    Z_max(beam) = max( abs( Z(:,beam) ) );
 end
 
 %saving deformations matrix__________________________________________________
@@ -82,8 +82,7 @@ save(file_name,"Z","-mat");
 
 % Printing the table______________________________________________________
 
-fprintf('For a beam made of %s with a weight of %f kg,\n'...
-    ,MATERIAL(material),mu(material)*g*L);
+fprintf('For a beam made of %s with a weight of %f kg,\n',MATERIAL(material),mu*g*L);
 
 disp('  Vertical Geometry   Recommended Max Load   Failure Load   Maximum Deformation');
 disp('                                       [N]            [N]                  [mm]');
@@ -107,7 +106,7 @@ fprintf('\n');
 
 x = ((m-1)./(M-1)).*L;
 
-fig1 = ...
+fig4 = ...
 figure(4);
     
     % draw the plot of deformations________________________________________
@@ -116,7 +115,7 @@ figure(4);
         'LineWidth',1)
     grid on
     title("Deformation of Beams Made of " +...
-        MATERIAL(material) + newline + "Oriented " + ORIENTATION(1) + "ly.");
+           MATERIAL(material) + newline + "Oriented " + ORIENTATION(1) + "ly.");
     xlabel('Length of Beam [m]');
     ylabel('Deformation [mm]');
     legend('Circular','Rectangular','I-Beam',...
@@ -129,7 +128,7 @@ figure(4);
         'LineWidth',1)
     grid on
     title("Deformation of Beams Made of " +...
-        MATERIAL(material) + newline + "Oriented " + ORIENTATION(1) + "ly.");
+           MATERIAL(material) + newline + "Oriented " + ORIENTATION(1) + "ly.");
     xlabel('Length of Beam [m]');
     ylabel('Deformation [mm]');
     legend('Circular','Rectangular','I-Beam',...
@@ -137,26 +136,39 @@ figure(4);
     axis([ min(x),        max(x),   ...
            min(min(Z))*2, abs(min(min(Z)))*2])
 
-    fig1.Position = [100 100 700 400];
+fig4.Position = [100 100 1000 500];
 
-    % draw the plot of rec. max load vs. second moment_____________________
+% draw the plot of rec. max load vs. second moment_____________________
+fig5 = ...
+figure(5);
 
-    figure(5);
 
-    loglog(F_data(:,1:5),geometry_data(1:5,3)','d','markerfacecolor','b','markersize',10);
-    grid on
-    hold on
+    loglog(F_data',geometry_data(:,3),'d','markerfacecolor','c','markersize',10);
 
-    loglog(F_data(:,1:5),geometry_data(6:10,3)','d','markerfacecolor','b','markersize',10);
-    text(F_data,geometry_data(:,3)*0.95,{'Vertical Circular','Vertical Rectangular',...
-        'Vertical I-Beam', 'Vertical T-Beam', 'Vertical L-Beam','Horizontal Circular',...
-        'Horizontal Rectangular','Horizontal I-Beam', 'Horizontal T-Beam', ...
-        'Horizontal L-Beam'}, 'FontSize', 8);
-    hold off
+
+
+    text(F_data([2,4,6:1:10])',geometry_data([2,4,6:1:10],3)*0.95, ...
+        { ...
+            'Vertical Rectangular', ...
+            'Vertical T-Beam', 'Horizontal Circular',...
+            'Horizontal Rectangular','Horizontal I-Beam', 'Horizontal T-Beam', ...
+            'Horizontal L-Beam' ...
+        }, 'FontSize', 8);
+    text(F_data([1,3,5])',geometry_data([1,3,5],3)*0.87, ...
+        { ...
+            'Vertical Circular', ...
+            'Vertical I-Beam', ...
+            'Vertical L-Beam'
+        }, 'FontSize', 8);
+
 
     title('Recommended Maximum Load vs. Second Moment of Area');
     xlabel('Recommended Maximum Load [N]');
     ylabel('Second Moment of Area [mm^4]');
+    grid on
+    axis([ min(F_data)*0.65, max(F_data)*1.35, min(min(geometry_data))*0.65, abs( max( geometry_data(:,3) ) )*1.35 ])
+    
+fig5.Position = [1200 100 550 550];
 
 % HELPER FUNCTIONS_________________________________________________________
 function [material] = Print_M_Menu(tries)
