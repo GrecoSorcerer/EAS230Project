@@ -20,22 +20,16 @@ M              = 101;   % unitless
 % CROSS SECTION INPUT______________________________________________________
 
 cross_section = Print_CS_Menu(MAXTRIES);
-
-if (cross_section  == -1)
+if (cross_section == -1)
     error("Too many invalid entries!")
 end
-
-
 
 %ORIENTATION INPUT_________________________________________________________
 
 orientation = Print_O_Menu(MAXTRIES);
-
 if (orientation  == -1)
     error("Too many invalid entries!")
 end
-
-
 
 % CALLING Geometry.m and Material.m________________________________________
 
@@ -144,56 +138,53 @@ figure(3);
           0, max(YM)*1.125]);
 
 %HELPER FUNCTIONS__________________________________________________________
-function [cross_section] = Print_CS_Menu(tries)
-    % Recursive function. Calls itself up to tries times, to get a valid
-    % response.
-    % Returns -1 if tries exceed maximum allowance
-    % Be sure to catch the -1 as an error
-
-    if (tries == 0)
+function [cross_section] = Print_CS_Menu(mtries)
+    
+    tries = 0;
+    while tries < mtries
         cross_section = -1;
-        return;
-    end
+    
+        disp('Choose a cross-section');
+        disp('    1 - Circular');
+        disp('    2 - Rectangular');
+        disp('    3 - I-Beam');
+        disp('    4 - T-Beam');
+        disp('    5 - L-Beam');
+        
+        tries = tries + 1;
+        op = input('Option: ','s');
+        % resolve op to a double. If not a number then will return NaN
+        op  = str2double(op);
 
-    disp('Choose a cross-section');
-    disp('    1 - Circular');
-    disp('    2 - Rectangular');
-    disp('    3 - I-Beam');
-    disp('    4 - T-Beam');
-    disp('    5 - L-Beam');
-
-    op = input('Option: ');
-
-    if ( ~isempty(op) && isnumeric(op) && ( (op >0) && (op <=5) ) )
-        cross_section = op;
-    else
-        cross_section = Print_CS_Menu(tries - 1);
+        if ( ~isempty(op) && isnumeric(op) && ( (op >0) && (op <=5) ) )
+            cross_section = op;
+            break
+        end
     end
 end
 
-function [orientation] = Print_O_Menu(tries)
-    % Recursive function. Calls itself up to tries times, to get a valid
-    % response.
-    % Returns -1 if exceeds tries
-    % Be sure to catch the -1 as an error
-
-    if (tries == 0)
+function [orientation] = Print_O_Menu(mtries)
+    
+    tries = 0;
+    while tries < mtries
         orientation = -1;
-        return;
+    
+        disp('Choose an orientation');
+        disp('    1 - Vertical');
+        disp('    2 - Horizontal');
+    
+        tries = tries + 1;
+        % take input as a string, to avoid errors when user presses a non numeric key
+        op = input('Option: ','s');
+        % resolve op to a double. If not a number then will return NaN
+        op  = str2double(op);
+        
+        % return if valid
+        if ( ~isempty(op) && isnumeric(op) && ( (op >0) && (op <=2) ) )
+            orientation = op;
+            break
+        end
     end
-
-    disp('Choose an orientation');
-    disp('    1 - Vertical');
-    disp('    2 - Horizontal');
-
-    op = input('Option: ');
-
-    if ( ~isempty(op) && isnumeric(op) && ( (op >0) && (op <=2) ) )
-        orientation = op;
-    else
-        orientation = Print_O_Menu(tries - 1);
-    end
-
 end
 
 % Salvatore L Greco <slgreco@buffalo.edu>
