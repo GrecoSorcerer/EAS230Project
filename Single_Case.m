@@ -123,95 +123,84 @@ fprintf("Maximum deformation [mm]: %2.4f\n", z_max*1000);
 fprintf("Weight [kg]: %2.1f\n",(mu*g*L));
 
 %HELPER FUNCTIONS__________________________________________________________ 
-
-function [cross_section] = Print_CS_Menu(tries)
-    % Recursive function. Calls itself up to tries times, to get a valid
-    % response.
-    % Returns -1 if exceeds tries
-    % Be sure to catch the -1 as an error
+function [cross_section] = Print_CS_Menu(mtries)
     
-    % Recursive Exit Condition
-    if (tries == 0)
+    tries = 0;
+    while tries < mtries
         cross_section = -1;
-        return;
-    end
     
-    disp('Choose a cross-section');
-    disp('	1 - Circular');
-    disp('	2 - Rectangular');
-    disp('	3 - I-beam');
-    disp('	4 - T-beam');
-    disp('	5 - L-beam');
+        disp('Choose a cross-section');
+        disp('    1 - Circular');
+        disp('    2 - Rectangular');
+        disp('    3 - I-Beam');
+        disp('    4 - T-Beam');
+        disp('    5 - L-Beam');
+        
+        tries = tries + 1;
+        op = input('Option: ','s');
+        % resolve op to a double. If not a number then will return NaN
+        op  = str2double(op);
 
-    op = input('Option: ');
-    
-    % Recursive loop condition
-
-    if ( ~isempty(op) && isnumeric(op)) && ( (op >0) && (op <=5) ) 
-        cross_section = op;
-    else
-        cross_section = Print_CS_Menu(tries - 1);
+        if ( ~isempty(op) && isnumeric(op) && ( (op >0) && (op <=5) ) )
+            cross_section = op;
+            break
+        end
     end
 end
 
-function [orientation] = Print_O_Menu(tries)
-    % Recursive function. Calls itself up to tries times, to get a valid
-    % response.
-    % Returns -1 if exceeds tries
-    % Be sure to catch the -1 as an error
+function [orientation] = Print_O_Menu(mtries)
     
-    % Recursive Exit Condition
-    if (tries == 0)
+    tries = 0;
+    while tries < mtries
         orientation = -1;
-        return;
+    
+        disp('Choose an orientation');
+        disp('    1 - Vertical');
+        disp('    2 - Horizontal');
+    
+        tries = tries + 1;
+        % take input as a string, to avoid errors when user presses a non numeric key
+        op = input('Option: ','s');
+        % resolve op to a double. If not a number then will return NaN
+        op  = str2double(op);
+        
+        % return if valid
+        if ( ~isempty(op) && isnumeric(op) && ( (op >0) && (op <=2) ) )
+            orientation = op;
+            break
+        end
     end
-
-    disp('Choose an orientation');
-    disp('	1 - Vertical');
-    disp('	2 - Horizontal');
-
-    op = input('Option: ');
-
-    % Recursive loop condition
-    if ( ~isempty(op) && isnumeric(op)) && ( (op >0) && (op <=2) ) 
-        orientation = op;
-    else
-        orientation = Print_O_Menu(tries - 1); 
-    end
-
 end
 
-function [material] = Print_M_Menu(tries)
-    % Recursive function. Calls itself up to tries times, to get a valid
-    % response.
-    % Returns -1 if exceeds tries
-    % Be sure to catch the -1 as an error
+function [material] = Print_M_Menu(mtries)
     
-    % Recursive Exit Condition
-    if (tries == 0)
+    tries = 0;
+    while tries < mtries
         material = -1;
-        return;
-    end
     
-    disp('Choose a material');
-    disp('	1 - White Oak');
-    disp('	2 - Western White Pine');
-    disp('	3 - Red Maple');
-    disp('	4 - Particle board');
-    disp('	5 - Plywood');
-    disp('	6 - Aluminum');
-    disp('	7 - Steel');
-
-    op = input('Option: ');
-
-    % Recursive loop condition
-    if ( ~isempty(op) && isnumeric(op) ) && ( (op >0) && (op <=7) ) 
-        material = op;
-    else
-        material = Print_M_Menu(tries - 1);
+        disp('Choose a material');
+        disp('	1 - White Oak');
+        disp('	2 - Western White Pine');
+        disp('	3 - Red Maple');
+        disp('	4 - Particle board');
+        disp('	5 - Plywood');
+        disp('	6 - Aluminum');
+        disp('	7 - Steel');
+        
+        tries = tries + 1;
+        % take input as a string, to avoid errors when user presses a non numeric key
+        op = input('Option: ', 's');
+        % resolve op to a double. If not a number then will return NaN
+        op = str2double(op);
+                
+        % return if valid
+        if ( ~isempty(op) && isnumeric(op) ) && ( (op >0) && (op <=7) ) 
+            material = op;
+            break
+        end
     end
-
 end
+
 
 % Salvatore L Greco <slgreco@buffalo.edu>
 % Alexander M Gross <amgross@buffalo.edu>
