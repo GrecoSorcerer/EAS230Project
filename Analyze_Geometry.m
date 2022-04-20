@@ -171,38 +171,33 @@ figure(5);
 fig5.Position = [1200 100 550 550];
 
 % HELPER FUNCTIONS_________________________________________________________
-function [material] = Print_M_Menu(tries)
-    % Recursive function. Calls itself up to tries times, to get a valid
-    % response.
-    % Returns -1 if exceeds tries
-    % Be sure to catch the -1 as an error
+function [material] = Print_M_Menu(mtries)
     
-    % Recursive Exit Condition
-    if (tries == 0)
+    tries = 0;
+    while tries < mtries
         material = -1;
-        return;
-    end
     
-    disp('Choose a material');
-    disp('	1 - White Oak');
-    disp('	2 - Western White Pine');
-    disp('	3 - Red Maple');
-    disp('	4 - Particle board');
-    disp('	5 - Plywood');
-    disp('	6 - Aluminum');
-    disp('	7 - Steel');
-
-    op = input('Option: ');
-    if isempty(op)
-        op = -1;
+        disp('Choose a material');
+        disp('	1 - White Oak');
+        disp('	2 - Western White Pine');
+        disp('	3 - Red Maple');
+        disp('	4 - Particle board');
+        disp('	5 - Plywood');
+        disp('	6 - Aluminum');
+        disp('	7 - Steel');
+        
+        tries = tries + 1;
+        % take input as a string, to avoid errors when user presses a non numeric key
+        op = input('Option: ', 's');
+        % resolve op to a double. If not a number then will return NaN
+        op = str2double(op);
+                
+        % return if valid
+        if ( ~isempty(op) && isnumeric(op) ) && ( (op >0) && (op <=7) ) 
+            material = op;
+            break
+        end
     end
-    % Recursive loop condition
-    if ( ~isempty(op) && isnumeric(op) ) && ( (op >0) && (op <=7) ) 
-        material = op;
-    else
-        material = Print_M_Menu(tries - 1);
-    end
-
 end
 
 % Salvatore L Greco <slgreco@buffalo.edu>
