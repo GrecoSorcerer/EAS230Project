@@ -2,7 +2,7 @@
 
 MAXTRIES       = 3;
 
-
+% ORIENTATION   CROSS_SECTION   MATERIAL  are hash maps. They are used to
 % automatically recall the string MaterialName associated with a given
 % integer 'key'. ex1 MATERIAL(7) returns a value of 'Steel'.
 %
