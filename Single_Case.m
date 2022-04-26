@@ -2,13 +2,19 @@
 
 MAXTRIES = 3;
 
+% ORIENTATION   CROSS_SECTION   MATERIAL  are hash maps. They are used to
+% automatically recall the string MaterialName associated with a given
+% integer 'key'. ex1 MATERIAL(7) returns a value of 'Steel'.
+%
+% This is used when generating tables and files names. Usually when looping
+% or when related to a user related input. 
+% ex2 let material = 4 from a user input, 
+%         then MATERIAL(material) = 'Particle board'.
 ORIENTATION    = containers.Map([1,2],{'Vertical','Horizontal'});
-
 CROSS_SECTION  = containers.Map([1,2,3,4,5], ...
                                 {'Circular', 'Rectangular', ...
                                  'I-beam',   'T-beam',      ...
                                  'L-beam'});
-
 MATERIAL       = containers.Map([1,2,3,4,5,6,7], ...
                                 {'White Oak', 'Western White Pine', ...
                                  'Red Maple', 'Particle board',     ...
@@ -51,8 +57,10 @@ end
 
 %THE BODY__________________________________________________________________
 
+% Calling the Material function for rho E sigma
 [rho, E, sigma] = Material(material);
 
+% Calling the Geometry function for a b I
 [a, b, I] = Geometry(cross_section, cs_area, orientation);
 
 % Compute the change in x
@@ -88,6 +96,8 @@ x = ((m-1)./(M-1)).*L;
 % design document.
 file_name = "Single_Beam.mat";
 
+% Set Material XSection and Orientation to save, and use later for string
+% concatenations.
 Beam_Material = MATERIAL(material);
 Beam_XSection = CROSS_SECTION(cross_section);
 Orientation   = ORIENTATION(orientation);
@@ -104,18 +114,17 @@ figure(1);
     % draw the plot of deformation
     plot(x,z,'g', ...
         'LineWidth',2)
+    % Set fig configs
     grid on
-
     title("The deformation for a beam made of " + Beam_Material + " and a" + newline ...
         + Beam_XSection + " cross-section in a " + Orientation + '.')
-
     % set the axis so the deformation is less exagerated.
     axis([ min(x),     max(x),   ...
            min(z)*20, max(abs(z))*7])
-
     xlabel("Length [m]")
     ylabel("Deformation [mm]")
 
+% Print output table
 fprintf("For a beam made of %s and a %s cross-section in a %s orientation,\n", Beam_Material, Beam_XSection, Orientation);
 fprintf("Recommended max load [N]: %4.3f\n", F);
 fprintf("Failure load [N]: %5.3f\n",F*safety_factor);
