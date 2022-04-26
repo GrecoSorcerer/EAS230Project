@@ -21,12 +21,19 @@ function [z] = Deformation(g, mu, E, I, dx, f)
 
     % set up the matrix to compute z, corresponds to the coefficients  
     % of the equations 7-11.
-    A = zeros(M);
+    A = zeros([M,M]);
+
+    % Fill the first 2 rows.
     A(1,:)   = [1 zeros([1,M-1])];
     A(2,:)   = [-3, 4, -1, zeros([1, M-3])];
+
+    % Iteratively create the inner portion of the matrix
     for m = 3:M-2
+        % The pattern of the inner part of the A Matrix
         A(m,m-2:m+2) = [1, -4, 6, -4, 1];
     end
+    
+    % Fill the final 2 rows.
     A(M-1,:) = [zeros([1, M-3]), 1, -4, 3];
     A(M,:)   = [zeros([1, M-1]) 1];
 

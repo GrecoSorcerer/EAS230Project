@@ -3,7 +3,7 @@ MAXTRIES = 3; % Max tries before throwing error for failed user inputs
 % Display the Beams Menu with MAXTRIES failed inputs allowed.
 % I use reccursion because its more interesting
 option = Print_Beams_Menu(MAXTRIES);
-
+% !! Handling error in switch case
 % Run the selected beam simulation script
 switch option
     case 1
@@ -19,8 +19,10 @@ switch option
         error("Unexpected error occured!")
 end
 
-
+% Helper function for printing the menu
 function [option] = Print_Beams_Menu(mtries)
+    % Set option to negative one, if function call fails, this will be the 
+    % return value.
     option = -1;
     
     tries = 0;
